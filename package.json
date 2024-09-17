@@ -1,0 +1,34 @@
+{
+  "name": "text-search-pro",
+  "description": "Text search like a PRO! Be it Web Page, TXT or JSON files, we got it covered!",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
+    "compile": "tsc --noEmit",
+    "postinstall": "wxt prepare"
+  },
+  "dependencies": {
+    "framer-motion": "^11.3.27",
+    "lodash": "^4.17.21",
+    "lucide-react": "^0.427.0",
+    "qw-mark.js": "^9.0.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.7",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@wxt-dev/module-react": "^1.1.0",
+    "typescript": "^5.5.4",
+    "vite-plugin-static-copy": "^1.0.6",
+    "wxt": "^0.19.1"
+  }
+}

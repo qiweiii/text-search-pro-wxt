@@ -1,0 +1,28 @@
+/* These are style for original web page's content, included by web_accessible_resources */
+
+/*
+MARK:- Mark.js
+*/
+.tsp-mark {
+  padding: 1px;
+  background: transparent;
+  background: linear-gradient(to right, #ffe75c 50%, transparent 50%);
+  background-position: right bottom;
+  background-size: 200% 100%;
+  transition: all 0.5s ease;
+  color: #fff;
+
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  border: none;
+}
+
+.tsp-mark.animate {
+  background-position: left bottom;
+  color: #000;
+}
+
+.tsp-mark.current {
+  background: rgb(248, 145, 0);
+}

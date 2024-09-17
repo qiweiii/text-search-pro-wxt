@@ -1,0 +1,431 @@
+@import "../../styles/fonts.css";
+
+:root {
+  /* --primary-shadow: box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.5); */
+  --primary-shadow: rgba(0, 0, 0, 0.4) 0px 2px 2px,
+    rgba(0, 0, 0, 0.3) 0px 5px 13px -3px,
+    rgba(0, 0, 0, 0.2) 0px -0.4px 0px 0px inset;
+  --secondary-shadow: rgba(0, 0, 0, 0.4) 0px 3px 10px;
+}
+
+body {
+  font-family: Poppins, Arial, Helvetica, sans-serif;
+}
+
+.root {
+  width: auto;
+
+  position: fixed;
+  top: 50px;
+  right: 50px;
+
+  display: flex;
+  flex-direction: column;
+
+  transition: all 0.2s ease;
+
+  color: black;
+}
+
+.root.dark {
+  color: white;
+}
+
+.visible {
+  display: flex;
+}
+
+.hidden {
+  display: none;
+}
+
+/*
+MARK:- First Row
+*/
+.root .RowOne {
+  min-height: 42px;
+
+  display: flex;
+
+  border-radius: 12px;
+  cursor: pointer;
+  padding: 0 4px 0 12px;
+
+  color: black;
+  background-color: rgba(255, 255, 255, 0.969);
+  box-shadow: var(--primary-shadow);
+}
+
+.root.dark .RowOne {
+  background-color: #1d1e22;
+}
+
+.root .RowOne .right {
+  display: flex;
+  height: 42px;
+  align-items: center;
+}
+
+.root .searchInputContainer {
+  position: relative;
+  /* height: 42px; */
+  display: flex;
+  align-items: center;
+}
+
+.root .searchInputContainer .errorMsg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  color: rgb(255, 0, 0, 0.68);
+  font-size: 10px;
+  margin-top: 4px;
+}
+
+.root .searchInput {
+  width: 80px;
+  line-height: 24px;
+  border: none;
+  outline: none;
+  margin-top: 4px;
+  margin-bottom: 4px;
+  margin-right: 6px;
+  font-size: 13px;
+  background-color: transparent;
+  caret-color: rgb(171, 171, 171);
+  transition: all 0.3s ease;
+
+  resize: none;
+  word-wrap: break-word;
+  white-space: pre-line;
+  overflow-y: auto;
+  min-height: 24px;
+  max-height: 72px;
+
+  color: black;
+}
+
+.root.dark .searchInput {
+  color: white;
+}
+
+.root .searchInput::-webkit-scrollbar {
+  width: 4px;
+}
+
+.root .searchInput::-webkit-scrollbar-track {
+  background-color: #e4e4e4;
+  border-radius: 120px;
+}
+
+.root .searchInput::-webkit-scrollbar-thumb {
+  border-radius: 120px;
+  background-color: rgb(112, 112, 112);
+  box-shadow: inset 2px 2px 5px 0 rgba(0, 0, 0, 0.1);
+}
+
+.root .searchInput.focus,
+.root .searchInput:focus {
+  width: 135px;
+  transition: all 0.3s ease;
+}
+
+.root .border {
+  height: 60%;
+  width: 1.5px;
+  background-color: rgb(144, 144, 144);
+  margin: 0 2px;
+}
+
+.root .iconButton {
+  width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 2px;
+  margin: 0px 2px 0px 2px;
+
+  border: none;
+  border-radius: 8px;
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.18s ease;
+
+  color: black;
+}
+
+.root.dark .iconButton {
+  color: white;
+}
+
+.root .iconButton:active {
+  transform: scale(0.6);
+}
+
+.root .iconButton.active {
+  background-color: rgb(101, 203, 234);
+  transition: all 0.3s ease;
+}
+
+.root .iconButton:hover {
+  background-color: rgb(101, 203, 234);
+  transition: all 0.3s ease;
+}
+
+.root .iconButton.nav {
+  margin: 0;
+}
+
+.root .iconButton.nav:hover {
+  background-color: rgb(198, 198, 198);
+  transition: all 0.3s ease;
+}
+
+.root .tooltip-container {
+  position: relative;
+}
+
+.root .tooltip-container .tooltip {
+  position: absolute;
+  width: max-content;
+  top: -36px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 5px 8px;
+  border-radius: 8px;
+  opacity: 0;
+  visibility: hidden;
+  font-size: 12px;
+  transition: all 0.3s ease;
+
+  background-color: rgb(101, 203, 234);
+  box-shadow: var(--secondary-shadow);
+}
+
+/* .root.dark .tooltip-container .tooltip {
+  color: white;
+} */
+
+.root .tooltip-container.nav .tooltip {
+  background-color: rgb(208, 208, 208);
+}
+
+.root .tooltip-container:hover .tooltip {
+  opacity: 0.95;
+  visibility: visible;
+}
+
+/*
+MARK:- pay-btn (no longer exists)
+*/
+.pay-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100px;
+  margin-right: 10px;
+}
+
+.pay-btn {
+  cursor: pointer;
+  width: 100%;
+  height: 30px;
+  position: relative;
+  left: -2px;
+  padding: 2px 4px;
+  font-size: 13px;
+  color: rgb(193, 163, 98);
+  border: 2px solid rgb(193, 163, 98);
+  border-radius: 11px;
+  background-color: transparent;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  overflow: hidden;
+}
+
+.pay-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 100px;
+  height: 20px;
+  border-radius: inherit;
+  scale: 0;
+  z-index: -1;
+  background-color: rgb(193, 163, 98);
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.pay-btn:hover::before {
+  scale: 3;
+}
+
+.pay-btn:hover {
+  color: #212121;
+  scale: 1.1;
+  box-shadow: 0 0px 20px rgba(193, 163, 98, 0.4);
+}
+
+.pay-btn:active {
+  scale: 1;
+}
+
+/*
+MARK:- Second Row
+*/
+.root .RowTwo {
+  display: flex;
+  justify-content: space-between;
+  color: black;
+  height: 0;
+}
+.root.dark .RowTwo {
+  color: white;
+}
+
+.root .RowTwo .result-counter {
+  margin-top: 4px;
+  background: transparent;
+}
+
+.root .RowTwo .result-counter span {
+  width: 65px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  border: none;
+  font-size: 12px;
+  cursor: pointer;
+
+  box-shadow: var(--primary-shadow);
+  background-color: rgba(255, 255, 255, 0.969);
+  color: black;
+}
+
+.root.dark .RowTwo .result-counter span {
+  color: white;
+  background-color: #1d1e22;
+}
+
+.root .RowTwo .menu-container {
+  margin-top: 4px;
+  display: grid;
+}
+.root .RowTwo .menu-container .tip {
+  color: rgb(144, 144, 144);
+  font-size: 10px;
+  width: 120px;
+  text-align: right;
+}
+.root .RowTwo .menu {
+  justify-self: flex-end;
+  display: flex;
+  flex-direction: column;
+  margin: 4px 0;
+  row-gap: 4px;
+}
+
+.root .RowTwo .menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: 4px;
+  font-size: 12px;
+  border-radius: 12px;
+  padding: 6px 8px;
+  border: none;
+
+  box-shadow: var(--primary-shadow);
+  background-color: rgba(255, 255, 255, 0.969);
+  color: black;
+}
+
+.root.dark .RowTwo .menu-item {
+  color: white;
+  background-color: #1d1e22;
+}
+
+/*
+MARK:- Dark Mode
+https://uiverse.io/alexruix/splendid-liger-23
+*/
+/* The switch - the box around the slider */
+.switch {
+  font-size: 11px;
+  position: relative;
+  display: inline-block;
+  width: 3.5em;
+  height: 2em;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  --background: #28096b;
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--background);
+  transition: 0.5s;
+  border-radius: 30px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 1.4em;
+  width: 1.4em;
+  border-radius: 50%;
+  left: 10%;
+  bottom: 15%;
+  box-shadow: inset 8px -4px 0px 0px #fff000;
+  background: var(--background);
+  transition: 0.5s;
+}
+
+input:checked + .slider {
+  background-color: #522ba7;
+}
+
+input:checked + .slider:before {
+  transform: translateX(100%);
+  box-shadow: inset 15px -4px 0px 15px #fff000;
+}
+
+/*
+MARK:- license-btn (no longer exists)
+*/
+.license-btn {
+  cursor: pointer;
+  width: 100%;
+  height: 22px;
+  position: relative;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  font-size: 12px;
+  color: inherit;
+}
+
+.license-btn span.pro {
+  color: rgb(193, 163, 98);
+}
+
+.license-btn span.free {
+  color: rgb(101, 203, 234);
+}
