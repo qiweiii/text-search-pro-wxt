@@ -1,5 +1,4 @@
-// @ts-ignore
-import Mark from "qw-mark.js";
+import Mark from "mark.js";
 import { SearchConfig } from "./type";
 
 // https://markjs.io/
@@ -52,7 +51,10 @@ const isValidTag = (
   let parent: HTMLElement | null | undefined = node.parentElement;
   for (let i = 0; i < levels; i++) {
     if (
-      ["SCRIPT", "NOSCRIPT", "STYLE", "META"].includes(parent?.tagName || "")
+      // TODO: inputs and textareas should be searchable
+      ["SCRIPT", "NOSCRIPT", "STYLE", "META", "INPUT", "TEXTAREA"].includes(
+        parent?.tagName || ""
+      )
     ) {
       return false;
     }
@@ -67,7 +69,7 @@ const isValidTag = (
  * Note that this throws on input errors
  */
 export const search = (
-  input: string | RegExp,
+  input: string,
   mode: SearchConfig,
   done: (numOfMatches: number) => void,
   onNoMatch?: (notFoundTerm: string) => void
@@ -122,13 +124,14 @@ export const search = (
   markInstance.unmark({
     done: function () {
       if (mode.isRegex) {
-        try {
-          // TODO: this cause extension and page to freeze...
-          const regex = new RegExp("bls");
-          markInstance.markRegExp(regex, options);
-        } catch (error) {
-          throw new Error("Invalid regular expression: " + error);
-        }
+        // TODO: mark.js regex search is not working
+        // try {
+        //   const regex = new RegExp(input);
+        //   markInstance.markRegExp(regex, options);
+        // } catch (error) {
+        //   console.error("Invalid regular expression: " + error);
+        //   throw new Error("Invalid regular expression: " + error);
+        // }
       } else {
         if (typeof input !== "string") {
           throw new Error("Input must be a string");

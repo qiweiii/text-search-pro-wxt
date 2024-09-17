@@ -18,12 +18,13 @@
     "framer-motion": "^11.3.27",
     "lodash": "^4.17.21",
     "lucide-react": "^0.427.0",
-    "qw-mark.js": "^9.0.2",
+    "mark.js": "^8.11.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@types/lodash": "^4.17.7",
+    "@types/mark.js": "^8.11.12",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@wxt-dev/module-react": "^1.1.0",

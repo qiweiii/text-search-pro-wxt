@@ -247,7 +247,7 @@ const Search: React.FC<SearchProps> = ({
           {/*
             MARK:- Regex
           */}
-          <div className="tooltip-container">
+          {/* <div className="tooltip-container">
             <button
               className={`iconButton ${config.isRegex ? "active" : ""}`}
               onClick={() => {
@@ -260,7 +260,7 @@ const Search: React.FC<SearchProps> = ({
               <RegexIcon size={17} style={{ marginTop: "-1px" }} />
             </button>
             <div className="tooltip">Match Regex</div>
-          </div>
+          </div> */}
 
           <div className="border"></div>
 
