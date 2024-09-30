@@ -2,7 +2,7 @@
   "name": "text-search-pro",
   "description": "Text search like a PRO! Be it Web Page, TXT or JSON files, we got it covered!",
   "private": true,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "scripts": {
     "dev": "wxt",
@@ -30,6 +30,6 @@
     "@wxt-dev/module-react": "^1.1.0",
     "typescript": "^5.5.4",
     "vite-plugin-static-copy": "^1.0.6",
-    "wxt": "^0.19.1"
+    "wxt": "^0.19.10"
   }
 }

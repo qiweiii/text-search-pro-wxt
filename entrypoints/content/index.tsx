@@ -21,7 +21,7 @@ export default defineContentScript({
       alignment: "top-right",
       anchor: "body",
       append: (anchor, ui) => {
-        ui.setAttribute("style", "float: right; margin: 10px 10px 0 0;");
+        ui.setAttribute("style", "float: right;");
         anchor.insertBefore(ui, anchor.firstChild);
       },
       onMount: (container) => {
