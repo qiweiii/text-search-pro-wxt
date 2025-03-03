@@ -28,6 +28,11 @@ export default defineConfig({
       },
     ],
     host_permissions: ["<all_urls>"],
+    browser_specific_settings: {
+      gecko: {
+        id: "{05ad0705-3b1d-41ae-a13e-ac3ca7093e7e}",
+      },
+    },
   },
   vite: () =>
     ({
