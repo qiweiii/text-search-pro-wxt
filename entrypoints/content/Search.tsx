@@ -11,6 +11,7 @@ import {
   X,
   EllipsisVertical,
 } from "lucide-react";
+import { SiX, SiGithub, SiDiscord } from "@icons-pack/react-simple-icons";
 import debounce from "lodash/debounce";
 
 import "./global.css";
@@ -93,7 +94,7 @@ const Search: React.FC<SearchProps> = ({
   // On mount
   useEffect(() => {
     // Add listener for when click on extension icon
-    browser.runtime.onMessage.addListener(function (request) {
+    browser.runtime.onMessage.addListener(function (request: any) {
       if (request.message === "toggle_tsp_extension") {
         // 2 step to allow animation finish then remove from dom
         setVisible((visible) => !visible);
@@ -153,6 +154,8 @@ const Search: React.FC<SearchProps> = ({
     <div
       className={`${inDom ? "visible" : "hidden"} root ${darkMode}`}
       style={{ opacity: visible ? 1 : 0 }}
+      onClick={(e) => e.stopPropagation()}
+      onKeyDown={(e) => e.stopPropagation()}
     >
       <motion.div
         initial="hidden"
@@ -351,6 +354,11 @@ const Search: React.FC<SearchProps> = ({
             duration: 0.1,
             ease: "easeOut",
           }}
+          onClick={(e) => {
+            if (!menuOpen) {
+              e.stopPropagation();
+            }
+          }}
         >
           {/* <span className="tip">
             These are global settings to be applied to all sites.
@@ -372,6 +380,34 @@ const Search: React.FC<SearchProps> = ({
                 />
                 <span className="slider"></span>
               </label>
+            </div>
+            <div className={`menu-item`}>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <a
+                  href="https://github.com/qiweiii/text-search-pro-wxt"
+                  target="_blank"
+                >
+                  <SiGithub
+                    title="Github"
+                    size={20}
+                    color={darkMode === "dark" ? "#fff" : "#000"}
+                  />
+                </a>
+                <a href="https://x.com/qiweidyang" target="_blank">
+                  <SiX
+                    title="X"
+                    size={20}
+                    color={darkMode === "dark" ? "#fff" : "#000"}
+                  />
+                </a>
+                <a href="https://discord.gg/X5EK8m2ksN" target="_blank">
+                  <SiDiscord
+                    title="Discord"
+                    size={20}
+                    color={darkMode === "dark" ? "#fff" : "#000"}
+                  />
+                </a>
+              </div>
             </div>
           </div>
         </motion.div>
