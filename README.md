@@ -1,3 +1,4 @@
+[![](https://dcbadge.limes.pink/api/server/https://discord.gg/X5EK8m2ksN?style=flat)](https://discord.gg/INVITE)
 
 ## Dev
 

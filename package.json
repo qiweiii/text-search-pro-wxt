@@ -2,20 +2,23 @@
   "name": "text-search-pro",
   "description": "Text search like a PRO! Be it Web Page, TXT or JSON files, we got it covered!",
   "private": true,
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
   "scripts": {
     "dev": "wxt",
     "dev:firefox": "wxt -b firefox",
     "build": "wxt build",
-    "build:firefox": "wxt build -b firefox",
+    "build:edge": "wxt build -b edge",
+    "build:firefox": "wxt build -b firefox --mv3",
     "zip": "wxt zip",
-    "zip:firefox": "wxt zip -b firefox",
+    "zip:edge": "wxt zip -b edge",
+    "zip:firefox": "wxt zip -b firefox --mv3",
+    "zip:all": "pnpm run zip && pnpm run zip:edge && pnpm run zip:firefox",
     "compile": "tsc --noEmit",
     "postinstall": "wxt prepare"
   },
   "dependencies": {
-    "framer-motion": "^11.3.27",
+    "framer-motion": "^11.18.2",
     "lodash": "^4.17.21",
     "lucide-react": "^0.427.0",
     "mark.js": "^8.11.1",
@@ -23,13 +26,18 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@types/lodash": "^4.17.7",
+    "@types/lodash": "^4.17.16",
     "@types/mark.js": "^8.11.12",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "@wxt-dev/module-react": "^1.1.0",
-    "typescript": "^5.5.4",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@wxt-dev/module-react": "^1.1.3",
+    "typescript": "^5.8.2",
+    "vite": "^6.0.9",
     "vite-plugin-static-copy": "^1.0.6",
-    "wxt": "^0.19.10"
+    "wxt": "^0.19.27"
+  },
+  "overrides": {
+    "cross-spawn": "7.0.6",
+    "braces": "3.0.4"
   }
 }
