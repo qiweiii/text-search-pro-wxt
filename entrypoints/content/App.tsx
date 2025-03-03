@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import Search from "./Search";
 import { search, scrollTo, markInstance } from "@/lib/dom";
 import { SearchConfig } from "@/lib/type";
@@ -8,6 +8,7 @@ const App: React.FC = () => {
   const [results, setResults] = useState<NodeListOf<Element> | undefined>();
   const [numResults, setNumResults] = useState<number>();
   const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
 
   // MARK:- Nav handlers
 
@@ -20,12 +21,14 @@ const App: React.FC = () => {
   };
 
   const onSearch = useCallback((searchText: string, config: SearchConfig) => {
+    setLoading(true);
     search(searchText, config, (num) => {
       const results = document.querySelectorAll(".tsp-mark");
       setResults(results);
       setNumResults(num);
       setCurrentIndex(0);
       increaseSearchNoBy1();
+      setLoading(false);
     });
   }, []);
 
@@ -82,6 +85,7 @@ const App: React.FC = () => {
       onClear={onClear}
       numResults={numResults}
       currentIndex={currentIndex}
+      loading={loading}
     />
   );
 };

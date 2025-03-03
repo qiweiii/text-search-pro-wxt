@@ -28,6 +28,7 @@ interface SearchProps {
   onClear: () => void;
   numResults: number | undefined;
   currentIndex: number;
+  loading: boolean;
 }
 
 const Search: React.FC<SearchProps> = ({
@@ -39,6 +40,7 @@ const Search: React.FC<SearchProps> = ({
   onClear,
   numResults,
   currentIndex,
+  loading,
 }) => {
   const [inDom, setInDom] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -354,11 +356,6 @@ const Search: React.FC<SearchProps> = ({
             duration: 0.1,
             ease: "easeOut",
           }}
-          onClick={(e) => {
-            if (!menuOpen) {
-              e.stopPropagation();
-            }
-          }}
         >
           {/* <span className="tip">
             These are global settings to be applied to all sites.
@@ -388,6 +385,7 @@ const Search: React.FC<SearchProps> = ({
                   target="_blank"
                 >
                   <SiGithub
+                    display="flex"
                     title="Github"
                     size={20}
                     color={darkMode === "dark" ? "#fff" : "#000"}
@@ -395,6 +393,7 @@ const Search: React.FC<SearchProps> = ({
                 </a>
                 <a href="https://x.com/qiweidyang" target="_blank">
                   <SiX
+                    display="flex"
                     title="X"
                     size={20}
                     color={darkMode === "dark" ? "#fff" : "#000"}
@@ -402,6 +401,7 @@ const Search: React.FC<SearchProps> = ({
                 </a>
                 <a href="https://discord.gg/X5EK8m2ksN" target="_blank">
                   <SiDiscord
+                    display="flex"
                     title="Discord"
                     size={20}
                     color={darkMode === "dark" ? "#fff" : "#000"}
