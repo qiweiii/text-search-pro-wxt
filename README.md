@@ -15,7 +15,7 @@ pnpm zip
 
 ## Limitations
 
-- Limited by mark.js library
+- Limited by [mark.js](https://github.com/julkue/mark.js) library
   - Search by whole word does not mark first word of a block sometimes
   - Search with regular expressions is not working
 - Cannot mark text in inputs

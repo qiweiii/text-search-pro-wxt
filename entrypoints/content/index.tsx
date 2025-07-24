@@ -17,7 +17,6 @@ export default defineContentScript({
     const ui = await createShadowRootUi(ctx, {
       name: "text-search-pro-shadow-root-ui",
       position: "overlay",
-      zIndex: 10000,
       alignment: "top-right",
       anchor: "body",
       append: (anchor, ui) => {

@@ -87,6 +87,12 @@ const Search: React.FC<SearchProps> = ({
     setMenuOpen((menuOpen) => !menuOpen);
   };
 
+  // Helper function to get the correct modifier key text
+  const getModifierKeyText = () => {
+    const isMac = navigator.platform.toLowerCase().includes('mac');
+    return isMac ? 'Cmd' : 'Ctrl';
+  };
+
   // MARK:- Effects
 
   useEffect(() => {
@@ -151,11 +157,50 @@ const Search: React.FC<SearchProps> = ({
     }
   }, [inputRef.current, inDom, visible]);
 
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only handle keyboard events when the search component is visible
+      if (!inDom || !visible) return;
+
+      // Detect platform for correct modifier key
+      const isMac = navigator.platform.toLowerCase().includes('mac');
+      const modifierKey = isMac ? e.metaKey : e.ctrlKey;
+
+      // Handle arrow keys for navigation (works even when input is focused)
+      if (e.key === "ArrowDown" && modifierKey) {
+        e.preventDefault();
+        e.stopPropagation();
+        onNext();
+      } else if (e.key === "ArrowUp" && modifierKey) {
+        e.preventDefault();
+        e.stopPropagation();
+        onPrev();
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        triggerCloseSearch();
+      } else if (e.key === "Enter" && modifierKey) {
+        e.preventDefault();
+        e.stopPropagation();
+        onNext();
+      }
+    };
+
+    // Add event listener to document to capture all keyboard events
+    document.addEventListener("keydown", handleKeyDown, true);
+
+    // Cleanup function to remove event listener
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown, true);
+    };
+  }, [inDom, visible, onNext, onPrev, triggerCloseSearch]);
+
   // MARK:- <Render />
   return (
     <div
       className={`${inDom ? "visible" : "hidden"} root ${darkMode}`}
-      style={{ opacity: visible ? 1 : 0 }}
+      style={{ opacity: visible ? 1 : 0, zIndex: 2147483647 }}
       onClick={(e) => e.stopPropagation()}
       onKeyDown={(e) => e.stopPropagation()}
     >
@@ -182,7 +227,7 @@ const Search: React.FC<SearchProps> = ({
             ref={inputRef}
             name="text"
             className={`searchInput ${searchText ? "focus" : ""}`}
-            placeholder="Search"
+            placeholder={`${getModifierKeyText()} + Enter`}
             rows={1}
             autoComplete="off"
             spellCheck="false"
@@ -276,14 +321,14 @@ const Search: React.FC<SearchProps> = ({
             <button className="iconButton nav" onClick={onPrev}>
               <ArrowUp size={18} />
             </button>
-            <div className="tooltip">Previous</div>
+            <div className="tooltip">Previous ({getModifierKeyText()} + ↑)</div>
           </div>
 
           <div className="tooltip-container nav">
             <button className="iconButton nav" onClick={onNext}>
               <ArrowDown size={18} />
             </button>
-            <div className="tooltip">Next</div>
+            <div className="tooltip">Next ({getModifierKeyText()} + ↓)</div>
           </div>
 
           <div className="tooltip-container nav">
@@ -391,7 +436,7 @@ const Search: React.FC<SearchProps> = ({
                     color={darkMode === "dark" ? "#fff" : "#000"}
                   />
                 </a>
-                <a href="https://x.com/qiweidyang" target="_blank">
+                <a href="https://x.com/buildin_fun" target="_blank">
                   <SiX
                     display="flex"
                     title="X"
