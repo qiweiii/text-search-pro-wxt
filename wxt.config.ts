@@ -1,5 +1,4 @@
 import { defineConfig, WxtViteConfig } from "wxt";
-// import { viteStaticCopy } from "vite-plugin-static-copy";
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
@@ -36,16 +35,6 @@ export default defineConfig({
   },
   vite: () =>
     ({
-      plugins: [
-        // viteStaticCopy({
-        //   targets: [
-        //     {
-        //       src: "node_modules/pdfjs-dist/build/pdf.worker.min.mjs",
-        //       dest: ".",
-        //     },
-        //   ],
-        // }),
-      ],
       legacy: {
         skipWebSocketTokenCheck: true,
       },
