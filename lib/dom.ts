@@ -1,32 +1,14 @@
-import Mark from "mark.js";
+import { Highlighter, MarkOptions } from "./highlighter";
 import { SearchConfig } from "./type";
 
-// https://markjs.io/
-export const markInstance = new Mark("body");
-
-/**
- * Default options for mark.js
- */
-const defaultOptions: Mark.MarkOptions = {
-  className: "tsp-mark",
-  acrossElements: true,
-  separateWordSearch: false,
-  ignoreJoiners: true,
-  exclude: ["text-search-pro-shadow-root-ui"], // ignore stuff inside my extension
-  debug: false,
-  iframes: true,
-  iframesTimeout: 2000,
-  each: function (mark: Element) {
-    mark.classList.add("animate");
-  },
-};
+export const markInstance = new Highlighter("body");
 
 /**
  * recusive check parents not display none or visibility hidden until some levels up
  */
 const isVisible = (
   node: Text | Element | HTMLElement | ChildNode,
-  level = 20
+  level = 20,
 ): boolean => {
   let parent: HTMLElement | null | undefined = node.parentElement;
   for (let i = 0; i < level; i++) {
@@ -46,14 +28,14 @@ const isVisible = (
  */
 const isValidTag = (
   node: Text | Element | HTMLElement | ChildNode,
-  levels: number = 5
+  levels: number = 5,
 ): boolean => {
   let parent: HTMLElement | null | undefined = node.parentElement;
   for (let i = 0; i < levels; i++) {
     if (
       // TODO: inputs and textareas should be searchable
       ["SCRIPT", "NOSCRIPT", "STYLE", "META", "INPUT", "TEXTAREA"].includes(
-        parent?.tagName || ""
+        parent?.tagName || "",
       )
     ) {
       return false;
@@ -61,6 +43,16 @@ const isValidTag = (
     parent = parent?.parentElement;
   }
   return true;
+};
+
+const baseOptions: MarkOptions = {
+  className: "tsp-mark",
+  acrossElements: true,
+  ignoreJoiners: true,
+  exclude: ["text-search-pro-shadow-root-ui"],
+  iframes: true,
+  each: (mark: Element) => mark.classList.add("animate"),
+  filter: (textNode: Text) => isVisible(textNode) && isValidTag(textNode),
 };
 
 /**
@@ -72,74 +64,32 @@ export const search = (
   input: string,
   mode: SearchConfig,
   done: (numOfMatches: number) => void,
-  onNoMatch?: (notFoundTerm: string) => void
+  onNoMatch?: (notFoundTerm: string) => void,
 ) => {
-  const options: Mark.MarkOptions = {
-    ...defaultOptions,
+  markInstance.unmark();
+
+  const options: MarkOptions = {
+    ...baseOptions,
     done: done,
-    noMatch: function (notFoundTerm: string) {
-      if (onNoMatch) {
-        onNoMatch(notFoundTerm);
-      }
-    },
-    filter: function (
-      textNode: Text,
-      term: string,
-      marksSoFar: number,
-      marksTotal: number
-    ) {
-      return isVisible(textNode) && isValidTag(textNode);
-    },
+    noMatch: (term: string) => onNoMatch?.(term),
   };
 
-  if (!mode.isRegex) {
-    options.caseSensitive = mode.isCaseSensitive;
-    // NOTE: this is not working, if the term is the first work in a prargrah/sentence
-    // it will not be marked, I tried to fix using my forked mark.js, but failed
-    options.accuracy = mode.isWholeWord
-      ? {
-          value: "exactly",
-          limiters: [
-            ",",
-            ".",
-            "!",
-            "?",
-            ";",
-            ":",
-            ")",
-            "(",
-            "[",
-            "]",
-            "{",
-            "}",
-            "-",
-            " ",
-          ],
-        }
-      : "partially";
+  if (mode.isRegex) {
+    try {
+      const regex = new RegExp(input, mode.isCaseSensitive ? "g" : "gi");
+      markInstance.markRegExp(regex, options);
+    } catch (error) {
+      console.error("Invalid regular expression: " + error);
+      throw new Error("Invalid regular expression: " + error);
+    }
   } else {
-    // do nothing for now
+    if (typeof input !== "string") {
+      throw new Error("Input must be a string");
+    }
+    options.caseSensitive = mode.isCaseSensitive;
+    options.wholeWord = mode.isWholeWord;
+    markInstance.mark(input, options);
   }
-
-  markInstance.unmark({
-    done: function () {
-      if (mode.isRegex) {
-        // TODO: mark.js regex search is not working
-        // try {
-        //   const regex = new RegExp(input);
-        //   markInstance.markRegExp(regex, options);
-        // } catch (error) {
-        //   console.error("Invalid regular expression: " + error);
-        //   throw new Error("Invalid regular expression: " + error);
-        // }
-      } else {
-        if (typeof input !== "string") {
-          throw new Error("Input must be a string");
-        }
-        markInstance.mark(input, options);
-      }
-    },
-  });
 };
 
 /**
