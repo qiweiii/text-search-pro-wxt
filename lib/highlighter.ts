@@ -76,15 +76,25 @@ function buildTermRegex(
   caseSensitive: boolean,
   ignoreJoiners: boolean,
 ): RegExp {
-  let pattern: string;
-  if (ignoreJoiners) {
-    // escape each char individually, then join with joiner pattern
-    pattern = term.split("").map(escapeRegex).join(JOINER_PATTERN);
-  } else {
-    pattern = escapeRegex(term);
+  // Array.from handles surrogate pairs (emoji, some CJK) correctly
+  const chars = Array.from(term);
+  const parts: string[] = [];
+  let i = 0;
+  while (i < chars.length) {
+    if (/\s/.test(chars[i])) {
+      // Merge consecutive whitespace into [\s]+ (matches any ws, any length)
+      while (i < chars.length && /\s/.test(chars[i])) i++;
+      parts.push("[\\s]+");
+    } else {
+      parts.push(escapeRegex(chars[i]));
+      i++;
+    }
+    if (ignoreJoiners && i < chars.length) {
+      parts.push(JOINER_PATTERN);
+    }
   }
   const flags = `g${caseSensitive ? "" : "i"}`;
-  return new RegExp(pattern, flags);
+  return new RegExp(parts.join(""), flags);
 }
 
 function* collectTextNodes(
