@@ -1,15 +1,12 @@
-import React, { useState, useEffect } from "react";
-// import * as pdfjsLib from "pdfjs-dist";
-import Search from "./Search";
-import { SearchConfig } from "@/lib/type";
+import type React from "react";
 
 interface PdfProps {
-  url: string;
+	url: string;
 }
 
 const Pdf: React.FC<PdfProps> = ({ url }) => {
-  // TODO: Implement PDF search
-  return <div></div>;
+	// TODO: Implement PDF search
+	return <div></div>;
 };
 
 export default Pdf;

@@ -1,303 +1,297 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { SiDiscord, SiGithub, SiX } from "@icons-pack/react-simple-icons";
 import { motion } from "framer-motion";
-import {
-  WholeWordIcon,
-  CaseSensitiveIcon,
-  RegexIcon,
-  ArrowUp,
-  ArrowDown,
-  ArrowUpToLine,
-  ArrowDownToLine,
-  X,
-  EllipsisVertical,
-} from "lucide-react";
-import { SiX, SiGithub, SiDiscord } from "@icons-pack/react-simple-icons";
 import debounce from "lodash/debounce";
+import {
+	ArrowDown,
+	ArrowDownToLine,
+	ArrowUp,
+	ArrowUpToLine,
+	CaseSensitiveIcon,
+	EllipsisVertical,
+	WholeWordIcon,
+	X,
+} from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import "./global.css";
-import { SearchConfig } from "@/lib/type";
 import { markInstance } from "@/lib/dom";
-import { getStorage } from "@/lib/storage";
+import type { SearchConfig } from "@/lib/type";
 
 interface SearchProps {
-  onSearch: (searchText: string, config: SearchConfig) => void;
-  onNext: () => void;
-  onPrev: () => void;
-  onFirst: () => void;
-  onLast: () => void;
-  onClear: () => void;
-  numResults: number | undefined;
-  currentIndex: number;
-  loading: boolean;
+	onSearch: (searchText: string, config: SearchConfig) => void;
+	onNext: () => void;
+	onPrev: () => void;
+	onFirst: () => void;
+	onLast: () => void;
+	onClear: () => void;
+	numResults: number | undefined;
+	currentIndex: number;
+	loading: boolean;
 }
 
 const Search: React.FC<SearchProps> = ({
-  onSearch,
-  onNext,
-  onPrev,
-  onFirst,
-  onLast,
-  onClear,
-  numResults,
-  currentIndex,
-  loading,
+	onSearch,
+	onNext,
+	onPrev,
+	onFirst,
+	onLast,
+	onClear,
+	numResults,
+	currentIndex,
+	loading,
 }) => {
-  const [inDom, setInDom] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const [config, setConfig] = useState<SearchConfig>({
-    isWholeWord: false,
-    isCaseSensitive: false,
-    isRegex: false,
-  });
-  const [searchText, setSearchText] = useState("");
-  const [darkMode, setDarkMode] = useState<"dark" | "light">("light");
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [inputError, setInputError] = useState<string>();
+	const [inDom, setInDom] = useState(false);
+	const [visible, setVisible] = useState(false);
+	const [config, setConfig] = useState<SearchConfig>({
+		isWholeWord: false,
+		isCaseSensitive: false,
+		isRegex: false,
+	});
+	const [searchText, setSearchText] = useState("");
+	const [darkMode, setDarkMode] = useState<"dark" | "light">("light");
+	const [menuOpen, setMenuOpen] = useState(false);
+	const [inputError, setInputError] = useState<string>();
 
-  const triggerCloseSearch = () => {
-    setVisible(false);
-    setTimeout(() => {
-      markInstance.unmark();
-      setInDom(false);
-    }, 200);
-  };
+	const triggerCloseSearch = () => {
+		setVisible(false);
+		setTimeout(() => {
+			markInstance.unmark();
+			setInDom(false);
+		}, 200);
+	};
 
-  const handleSearch = useCallback(
-    debounce(async (text: string) => {
-      if (!text) {
-        onClear();
-        return;
-      }
+	const handleSearch = useCallback(
+		debounce(async (text: string) => {
+			if (!text) {
+				onClear();
+				return;
+			}
 
-      try {
-        onSearch(text, config);
-        setInputError("");
-      } catch (e) {
-        console.error(e);
-        if (e instanceof Error) {
-          onClear();
-          setInputError(e.message);
-        }
-      }
-    }, 400),
-    [config, onSearch]
-  );
+			try {
+				onSearch(text, config);
+				setInputError("");
+			} catch (e) {
+				console.error(e);
+				if (e instanceof Error) {
+					onClear();
+					setInputError(e.message);
+				}
+			}
+		}, 400),
+		[],
+	);
 
-  const toggleMenu = () => {
-    setMenuOpen((menuOpen) => !menuOpen);
-  };
+	const toggleMenu = () => {
+		setMenuOpen((menuOpen) => !menuOpen);
+	};
 
-  // Helper function to get the correct modifier key text
-  const getModifierKeyText = () => {
-    const isMac = navigator.platform.toLowerCase().includes('mac');
-    return isMac ? 'Cmd' : 'Ctrl';
-  };
+	// Helper function to get the correct modifier key text
+	const getModifierKeyText = () => {
+		const isMac = navigator.platform.toLowerCase().includes("mac");
+		return isMac ? "Cmd" : "Ctrl";
+	};
 
-  // MARK:- Effects
+	// MARK:- Effects
 
-  useEffect(() => {
-    handleSearch(searchText);
-  }, [config, searchText, handleSearch]);
+	useEffect(() => {
+		handleSearch(searchText);
+	}, [searchText, handleSearch]);
 
-  // On mount
-  useEffect(() => {
-    // Add listener for when click on extension icon
-    browser.runtime.onMessage.addListener(function (request: any) {
-      if (request.message === "toggle_tsp_extension") {
-        // 2 step to allow animation finish then remove from dom
-        setVisible((visible) => !visible);
-        if (inDom) {
-          // delay to make sure the animation is finished
-          setTimeout(() => {
-            setInDom(false);
-          }, 300);
-        } else {
-          setInDom(true);
-        }
+	// On mount
+	useEffect(() => {
+		// Add listener for when click on extension icon
+		browser.runtime.onMessage.addListener((request: any) => {
+			if (request.message === "toggle_tsp_extension") {
+				// 2 step to allow animation finish then remove from dom
+				setVisible((visible) => !visible);
+				if (inDom) {
+					// delay to make sure the animation is finished
+					setTimeout(() => {
+						setInDom(false);
+					}, 300);
+				} else {
+					setInDom(true);
+				}
 
-        browser.storage.local
-          // NOTE: these could be global configs if required
-          // (like allow users set in options page or a popup in content script)
-          .get(["isWholeWord", "isCaseSensitive", "isRegex"])
-          .then((res) => {
-            setConfig(res as SearchConfig);
-          });
+				browser.storage.local
+					// NOTE: these could be global configs if required
+					// (like allow users set in options page or a popup in content script)
+					.get(["isWholeWord", "isCaseSensitive", "isRegex"])
+					.then((res) => {
+						setConfig(res as SearchConfig);
+					});
 
-        // send message to background.js for google analytics (if any)
-        // browser.runtime.sendMessage({
-        //   action: "extension_action_clicked",
-        //   url: request.url,
-        // });
-      }
-    });
+				// send message to background.js for google analytics (if any)
+				// browser.runtime.sendMessage({
+				//   action: "extension_action_clicked",
+				//   url: request.url,
+				// });
+			}
+		});
 
-    // set color mode
-    if (
-      window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches
-    ) {
-      setDarkMode("dark");
-    } else {
-      setDarkMode("light");
-    }
-  }, []);
+		// set color mode
+		if (window.matchMedia?.("(prefers-color-scheme: dark)").matches) {
+			setDarkMode("dark");
+		} else {
+			setDarkMode("light");
+		}
+	}, [inDom]);
 
-  // set dark mode
-  useEffect(() => {
-    browser.storage.local.set({ darkMode });
-  }, [darkMode]);
+	// set dark mode
+	useEffect(() => {
+		browser.storage.local.set({ darkMode });
+	}, [darkMode]);
 
-  const inputRef = useRef<HTMLTextAreaElement>(null);
+	const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  // this force auto focus on visible
-  useEffect(() => {
-    if (inputRef.current && inDom && visible) {
-      inputRef.current.focus();
-      inputRef.current.value = "";
-    }
-  }, [inputRef.current, inDom, visible]);
+	// this force auto focus on visible
+	useEffect(() => {
+		if (inputRef.current && inDom && visible) {
+			inputRef.current.focus();
+			inputRef.current.value = "";
+		}
+	}, [inDom, visible]);
 
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Only handle keyboard events when the search component is visible
-      if (!inDom || !visible) return;
+	// Keyboard navigation
+	useEffect(() => {
+		const handleKeyDown = (e: KeyboardEvent) => {
+			// Only handle keyboard events when the search component is visible
+			if (!inDom || !visible) return;
 
-      // Detect platform for correct modifier key
-      const isMac = navigator.platform.toLowerCase().includes('mac');
-      const modifierKey = isMac ? e.metaKey : e.ctrlKey;
+			// Detect platform for correct modifier key
+			const isMac = navigator.platform.toLowerCase().includes("mac");
+			const modifierKey = isMac ? e.metaKey : e.ctrlKey;
 
-      // Handle arrow keys for navigation (works even when input is focused)
-      if (e.key === "ArrowDown" && modifierKey) {
-        e.preventDefault();
-        e.stopPropagation();
-        onNext();
-      } else if (e.key === "ArrowUp" && modifierKey) {
-        e.preventDefault();
-        e.stopPropagation();
-        onPrev();
-      } else if (e.key === "Escape") {
-        e.preventDefault();
-        e.stopPropagation();
-        triggerCloseSearch();
-      } else if (e.key === "Enter" && modifierKey) {
-        e.preventDefault();
-        e.stopPropagation();
-        onNext();
-      }
-    };
+			// Handle arrow keys for navigation (works even when input is focused)
+			if (e.key === "ArrowDown" && modifierKey) {
+				e.preventDefault();
+				e.stopPropagation();
+				onNext();
+			} else if (e.key === "ArrowUp" && modifierKey) {
+				e.preventDefault();
+				e.stopPropagation();
+				onPrev();
+			} else if (e.key === "Escape") {
+				e.preventDefault();
+				e.stopPropagation();
+				triggerCloseSearch();
+			} else if (e.key === "Enter" && modifierKey) {
+				e.preventDefault();
+				e.stopPropagation();
+				onNext();
+			}
+		};
 
-    // Add event listener to document to capture all keyboard events
-    document.addEventListener("keydown", handleKeyDown, true);
+		// Add event listener to document to capture all keyboard events
+		document.addEventListener("keydown", handleKeyDown, true);
 
-    // Cleanup function to remove event listener
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown, true);
-    };
-  }, [inDom, visible, onNext, onPrev, triggerCloseSearch]);
+		// Cleanup function to remove event listener
+		return () => {
+			document.removeEventListener("keydown", handleKeyDown, true);
+		};
+	}, [inDom, visible, onNext, onPrev, triggerCloseSearch]);
 
-  // MARK:- <Render />
-  return (
-    <div
-      className={`${inDom ? "visible" : "hidden"} root ${darkMode}`}
-      style={{ opacity: visible ? 1 : 0, zIndex: 2147483647 }}
-      onClick={(e) => e.stopPropagation()}
-      onKeyDown={(e) => e.stopPropagation()}
-    >
-      <motion.div
-        initial="hidden"
-        animate={inDom ? "visible" : "hidden"}
-        exit="hidden"
-        variants={{
-          hidden: { opacity: 0 },
-          visible: { opacity: 1 },
-        }}
-        transition={{
-          delay: 0.08,
-          duration: 0.2,
-          ease: "easeOut",
-        }}
-        className="RowOne"
-      >
-        {/*
+	// MARK:- <Render />
+	return (
+		<div
+			className={`${inDom ? "visible" : "hidden"} root ${darkMode}`}
+			style={{ opacity: visible ? 1 : 0, zIndex: 2147483647 }}
+			onClick={(e) => e.stopPropagation()}
+			onKeyDown={(e) => e.stopPropagation()}
+		>
+			<motion.div
+				initial="hidden"
+				animate={inDom ? "visible" : "hidden"}
+				exit="hidden"
+				variants={{
+					hidden: { opacity: 0 },
+					visible: { opacity: 1 },
+				}}
+				transition={{
+					delay: 0.08,
+					duration: 0.2,
+					ease: "easeOut",
+				}}
+				className="RowOne"
+			>
+				{/*
           MARK:- Search Input
         */}
-        <div className="searchInputContainer">
-          <textarea
-            ref={inputRef}
-            name="text"
-            className={`searchInput ${searchText ? "focus" : ""}`}
-            placeholder={`${getModifierKeyText()} + Enter`}
-            rows={1}
-            autoComplete="off"
-            spellCheck="false"
-            maxLength={1024}
-            value={searchText}
-            autoFocus={true}
-            onInput={(e) => {
-              const elem = e.target as HTMLTextAreaElement;
-              elem.style.height = "auto";
-              elem.style.height = `${elem.scrollHeight - 4}px`;
-              if (elem.value.length === 0) {
-                elem.style.height = "auto";
-              }
-            }}
-            // NOTE: not using enter, since search on type feels better
-            // onKeyDown={(e) => {
-            //   if (e.key == "Enter" && !e.shiftKey) {
-            //     handleSearch();
-            //     e.preventDefault();
-            //   }
-            // }}
-            onChange={(e) => {
-              setSearchText(e.target.value);
-            }}
-          />
-          <span className="errorMsg">{inputError}</span>
-        </div>
+				<div className="searchInputContainer">
+					<textarea
+						ref={inputRef}
+						name="text"
+						className={`searchInput ${searchText ? "focus" : ""}`}
+						placeholder={`${getModifierKeyText()} + Enter`}
+						rows={1}
+						autoComplete="off"
+						spellCheck="false"
+						maxLength={1024}
+						value={searchText}
+						onInput={(e) => {
+							const elem = e.target as HTMLTextAreaElement;
+							elem.style.height = "auto";
+							elem.style.height = `${elem.scrollHeight - 4}px`;
+							if (elem.value.length === 0) {
+								elem.style.height = "auto";
+							}
+						}}
+						// NOTE: not using enter, since search on type feels better
+						// onKeyDown={(e) => {
+						//   if (e.key == "Enter" && !e.shiftKey) {
+						//     handleSearch();
+						//     e.preventDefault();
+						//   }
+						// }}
+						onChange={(e) => {
+							setSearchText(e.target.value);
+						}}
+					/>
+					<span className="errorMsg">{inputError}</span>
+				</div>
 
-        <div className="right">
-          {/*
+				<div className="right">
+					{/*
             MARK:- Case sensitive
           */}
-          <div className="tooltip-container">
-            <button
-              className={`iconButton ${config.isCaseSensitive ? "active" : ""}`}
-              onClick={() => {
-                setConfig((config) => ({
-                  ...config,
-                  isCaseSensitive: !config.isCaseSensitive,
-                }));
-              }}
-            >
-              <CaseSensitiveIcon size={20} style={{ marginTop: "1.5px" }} />
-            </button>
+					<div className="tooltip-container">
+						<button
+							className={`iconButton ${config.isCaseSensitive ? "active" : ""}`}
+							onClick={() => {
+								setConfig((config) => ({
+									...config,
+									isCaseSensitive: !config.isCaseSensitive,
+								}));
+							}}
+						>
+							<CaseSensitiveIcon size={20} style={{ marginTop: "1.5px" }} />
+						</button>
 
-            <div className="tooltip">Match Case</div>
-          </div>
+						<div className="tooltip">Match Case</div>
+					</div>
 
-          {/*
+					{/*
             MARK:- Whole word
           */}
-          <div className="tooltip-container">
-            <button
-              className={`iconButton ${config.isWholeWord ? "active" : ""}`}
-              onClick={() => {
-                setConfig((config) => ({
-                  ...config,
-                  isWholeWord: !config.isWholeWord,
-                }));
-              }}
-            >
-              <WholeWordIcon size={18} />
-            </button>
-            <div className="tooltip">Match Whole Word</div>
-          </div>
+					<div className="tooltip-container">
+						<button
+							className={`iconButton ${config.isWholeWord ? "active" : ""}`}
+							onClick={() => {
+								setConfig((config) => ({
+									...config,
+									isWholeWord: !config.isWholeWord,
+								}));
+							}}
+						>
+							<WholeWordIcon size={18} />
+						</button>
+						<div className="tooltip">Match Whole Word</div>
+					</div>
 
-          {/*
+					{/*
             MARK:- Regex
           */}
-          {/* <div className="tooltip-container">
+					{/* <div className="tooltip-container">
             <button
               className={`iconButton ${config.isRegex ? "active" : ""}`}
               onClick={() => {
@@ -312,153 +306,158 @@ const Search: React.FC<SearchProps> = ({
             <div className="tooltip">Match Regex</div>
           </div> */}
 
-          <div className="border"></div>
+					<div className="border"></div>
 
-          {/*
+					{/*
             MARK:- Nav Btns
           */}
-          <div className="tooltip-container nav">
-            <button className="iconButton nav" onClick={onPrev}>
-              <ArrowUp size={18} />
-            </button>
-            <div className="tooltip">Previous ({getModifierKeyText()} + ↑)</div>
-          </div>
+					<div className="tooltip-container nav">
+						<button className="iconButton nav" onClick={onPrev}>
+							<ArrowUp size={18} />
+						</button>
+						<div className="tooltip">Previous ({getModifierKeyText()} + ↑)</div>
+					</div>
 
-          <div className="tooltip-container nav">
-            <button className="iconButton nav" onClick={onNext}>
-              <ArrowDown size={18} />
-            </button>
-            <div className="tooltip">Next ({getModifierKeyText()} + ↓)</div>
-          </div>
+					<div className="tooltip-container nav">
+						<button className="iconButton nav" onClick={onNext}>
+							<ArrowDown size={18} />
+						</button>
+						<div className="tooltip">Next ({getModifierKeyText()} + ↓)</div>
+					</div>
 
-          <div className="tooltip-container nav">
-            <button className="iconButton nav" onClick={onFirst}>
-              <ArrowUpToLine size={18} />
-            </button>
-            <div className="tooltip">First</div>
-          </div>
+					<div className="tooltip-container nav">
+						<button className="iconButton nav" onClick={onFirst}>
+							<ArrowUpToLine size={18} />
+						</button>
+						<div className="tooltip">First</div>
+					</div>
 
-          <div className="tooltip-container nav">
-            <button className="iconButton nav" onClick={onLast}>
-              <ArrowDownToLine size={18} />
-            </button>
-            <div className="tooltip">Last</div>
-          </div>
+					<div className="tooltip-container nav">
+						<button className="iconButton nav" onClick={onLast}>
+							<ArrowDownToLine size={18} />
+						</button>
+						<div className="tooltip">Last</div>
+					</div>
 
-          <div className="tooltip-container nav">
-            <button className="iconButton nav" onClick={triggerCloseSearch}>
-              <X size={19} />
-            </button>
-            <div className="tooltip">Close (Alt + F)</div>
-          </div>
+					<div className="tooltip-container nav">
+						<button className="iconButton nav" onClick={triggerCloseSearch}>
+							<X size={19} />
+						</button>
+						<div className="tooltip">Close (Alt + F)</div>
+					</div>
 
-          <div className="tooltip-container nav">
-            <button className="iconButton nav" onClick={toggleMenu}>
-              <EllipsisVertical size={17} />
-            </button>
-            <div className="tooltip">Menu</div>
-          </div>
-        </div>
-      </motion.div>
+					<div className="tooltip-container nav">
+						<button className="iconButton nav" onClick={toggleMenu}>
+							<EllipsisVertical size={17} />
+						</button>
+						<div className="tooltip">Menu</div>
+					</div>
+				</div>
+			</motion.div>
 
-      <div className="RowTwo">
-        {/*
+			<div className="RowTwo">
+				{/*
           MARK:- Result Counter
         */}
-        <motion.div
-          className="result-counter"
-          initial="hidden"
-          animate={numResults != undefined ? "visible" : "hidden"}
-          exit="hidden"
-          variants={{
-            hidden: { opacity: 0 },
-            visible: { opacity: 1 },
-          }}
-          transition={{
-            delay: 0.05,
-            duration: 0.1,
-            ease: "easeOut",
-          }}
-        >
-          <span>
-            {numResults ? `${currentIndex + 1} / ${numResults}` : "No match"}
-          </span>
-        </motion.div>
-        {/*
+				<motion.div
+					className="result-counter"
+					initial="hidden"
+					animate={numResults !== undefined ? "visible" : "hidden"}
+					exit="hidden"
+					variants={{
+						hidden: { opacity: 0 },
+						visible: { opacity: 1 },
+					}}
+					transition={{
+						delay: 0.05,
+						duration: 0.1,
+						ease: "easeOut",
+					}}
+				>
+					<span>
+						{numResults ? `${currentIndex + 1} / ${numResults}` : "No match"}
+					</span>
+				</motion.div>
+				{/*
           MARK:- Menu
         */}
-        <motion.div
-          className="menu-container"
-          initial="hidden"
-          animate={menuOpen ? "visible" : "hidden"}
-          exit="hidden"
-          variants={{
-            hidden: { opacity: 0 },
-            visible: { opacity: 1 },
-          }}
-          transition={{
-            delay: 0.05,
-            duration: 0.1,
-            ease: "easeOut",
-          }}
-        >
-          {/* <span className="tip">
+				<motion.div
+					className="menu-container"
+					initial="hidden"
+					animate={menuOpen ? "visible" : "hidden"}
+					exit="hidden"
+					variants={{
+						hidden: { opacity: 0 },
+						visible: { opacity: 1 },
+					}}
+					transition={{
+						delay: 0.05,
+						duration: 0.1,
+						ease: "easeOut",
+					}}
+				>
+					{/* <span className="tip">
             These are global settings to be applied to all sites.
           </span> */}
-          <div className="menu">
-            <div className={`menu-item`}>
-              <span>Dark/Light</span>
-              <label className="switch">
-                <input
-                  type="checkbox"
-                  checked={darkMode === "light"}
-                  onChange={() => {
-                    if (darkMode === "dark") {
-                      setDarkMode("light");
-                    } else {
-                      setDarkMode("dark");
-                    }
-                  }}
-                />
-                <span className="slider"></span>
-              </label>
-            </div>
-            <div className={`menu-item`}>
-              <div style={{ display: "flex", gap: "8px" }}>
-                <a
-                  href="https://github.com/qiweiii/text-search-pro-wxt"
-                  target="_blank"
-                >
-                  <SiGithub
-                    display="flex"
-                    title="Github"
-                    size={20}
-                    color={darkMode === "dark" ? "#fff" : "#000"}
-                  />
-                </a>
-                <a href="https://x.com/qiweiy" target="_blank">
-                  <SiX
-                    display="flex"
-                    title="X"
-                    size={20}
-                    color={darkMode === "dark" ? "#fff" : "#000"}
-                  />
-                </a>
-                <a href="https://discord.gg/X5EK8m2ksN" target="_blank">
-                  <SiDiscord
-                    display="flex"
-                    title="Discord"
-                    size={20}
-                    color={darkMode === "dark" ? "#fff" : "#000"}
-                  />
-                </a>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </div>
-    </div>
-  );
+					<div className="menu">
+						<div className={`menu-item`}>
+							<span>Dark/Light</span>
+							<label className="switch">
+								<input
+									type="checkbox"
+									checked={darkMode === "light"}
+									onChange={() => {
+										if (darkMode === "dark") {
+											setDarkMode("light");
+										} else {
+											setDarkMode("dark");
+										}
+									}}
+								/>
+								<span className="slider"></span>
+							</label>
+						</div>
+						<div className={`menu-item`}>
+							<div style={{ display: "flex", gap: "8px" }}>
+								<a
+									href="https://github.com/qiweiii/text-search-pro-wxt"
+									target="_blank"
+									rel="noopener"
+								>
+									<SiGithub
+										display="flex"
+										title="Github"
+										size={20}
+										color={darkMode === "dark" ? "#fff" : "#000"}
+									/>
+								</a>
+								<a href="https://x.com/qiweiy" target="_blank" rel="noopener">
+									<SiX
+										display="flex"
+										title="X"
+										size={20}
+										color={darkMode === "dark" ? "#fff" : "#000"}
+									/>
+								</a>
+								<a
+									href="https://discord.gg/X5EK8m2ksN"
+									target="_blank"
+									rel="noopener"
+								>
+									<SiDiscord
+										display="flex"
+										title="Discord"
+										size={20}
+										color={darkMode === "dark" ? "#fff" : "#000"}
+									/>
+								</a>
+							</div>
+						</div>
+					</div>
+				</motion.div>
+			</div>
+		</div>
+	);
 };
 
 export default Search;

@@ -3,20 +3,23 @@
 ## Dev
 
 ```bash
+pnpm install
+pnpm wxt prepare
 pnpm dev
 ```
 
-## Publish
+## Build & Package
 
 ```bash
 pnpm build
 pnpm zip
 ```
 
-## Limitations
+## Lint & Format
 
-- Limited by [mark.js](https://github.com/julkue/mark.js) library
-  - Search by whole word does not mark first word of a block sometimes
-  - Search with regular expressions is not working
-- Cannot mark text in inputs
-- Cannot mark text in PDFs
+```bash
+pnpm lint          # lint
+pnpm format        # format and write
+pnpm check         # lint + format + organize imports, with writes
+pnpm compile       # tsc --noEmit
+```

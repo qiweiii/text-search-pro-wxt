@@ -1,4 +1,4 @@
-import { Manifest } from "wxt/browser";
+export {};
 
 // NOTE: permissions cannot be get and set in content script and background
 // it can be in action, popup, or options page
