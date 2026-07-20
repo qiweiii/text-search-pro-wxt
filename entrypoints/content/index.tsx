@@ -15,7 +15,6 @@ export default defineContentScript({
 	cssInjectionMode: "ui",
 
 	async main(ctx) {
-		loadFonts();
 		const ui = await createShadowRootUi(ctx, {
 			name: "text-search-pro-shadow-root-ui",
 			position: "overlay",
@@ -26,6 +25,12 @@ export default defineContentScript({
 				anchor.insertBefore(ui, anchor.firstChild);
 			},
 			onMount: (container) => {
+				const rootNode = container.getRootNode() as ShadowRoot & {
+					fonts?: FontFaceSet;
+				};
+				const fontSet = rootNode.fonts ?? document.fonts;
+				loadFonts(fontSet);
+
 				const wrapper = document.createElement("div");
 				container.append(wrapper);
 

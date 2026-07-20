@@ -83,7 +83,7 @@ MARK:- First Row
 }
 
 .root .searchInput {
-	width: 80px;
+	width: 60px;
 	line-height: 24px;
 	border: none;
 	outline: none;
@@ -99,6 +99,7 @@ MARK:- First Row
 	word-wrap: break-word;
 	white-space: pre-line;
 	overflow-y: auto;
+	scrollbar-width: none;
 	min-height: 24px;
 	max-height: 72px;
 
@@ -110,31 +111,25 @@ MARK:- First Row
 }
 
 .root .searchInput::-webkit-scrollbar {
-	width: 4px;
+	width: 0;
+	display: none;
 }
 
-.root .searchInput::-webkit-scrollbar-track {
-	background-color: #e4e4e4;
-	border-radius: 120px;
+.root .searchInput::placeholder {
+	color: rgb(171, 171, 171);
+	opacity: 0;
+	transition: opacity 0.3s ease;
 }
 
-.root .searchInput::-webkit-scrollbar-thumb {
-	border-radius: 120px;
-	background-color: rgb(112, 112, 112);
-	box-shadow: inset 2px 2px 5px 0 rgba(0, 0, 0, 0.1);
+.root .searchInput:focus::placeholder,
+.root .searchInput.focus::placeholder {
+	opacity: 1;
 }
 
 .root .searchInput.focus,
 .root .searchInput:focus {
 	width: 135px;
 	transition: all 0.3s ease;
-}
-
-.root .border {
-	height: 60%;
-	width: 1.5px;
-	background-color: rgb(144, 144, 144);
-	margin: 0 2px;
 }
 
 .root .iconButton {

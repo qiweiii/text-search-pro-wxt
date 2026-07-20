@@ -8,6 +8,7 @@ import {
 	ArrowUpToLine,
 	CaseSensitiveIcon,
 	EllipsisVertical,
+	Search as SearchIcon,
 	WholeWordIcon,
 	X,
 } from "lucide-react";
@@ -50,12 +51,20 @@ const Search: React.FC<SearchProps> = ({
 	const [darkMode, setDarkMode] = useState<"dark" | "light">("light");
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [inputError, setInputError] = useState<string>();
+	const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
+	const isOpenRef = useRef(false);
 
 	const triggerCloseSearch = useCallback(() => {
+		if (timeoutRef.current) {
+			clearTimeout(timeoutRef.current);
+			timeoutRef.current = undefined;
+		}
+		isOpenRef.current = false;
 		setVisible(false);
-		setTimeout(() => {
+		timeoutRef.current = setTimeout(() => {
 			markInstance.unmark();
 			setInDom(false);
+			timeoutRef.current = undefined;
 		}, 200);
 	}, []);
 
@@ -101,15 +110,25 @@ const Search: React.FC<SearchProps> = ({
 		// Add listener for when click on extension icon
 		browser.runtime.onMessage.addListener((request: { message?: string }) => {
 			if (request.message === "toggle_tsp_extension") {
-				// 2 step to allow animation finish then remove from dom
-				setVisible((visible) => !visible);
-				if (inDom) {
-					// delay to make sure the animation is finished
-					setTimeout(() => {
+				// Debounce: cancel any pending close timeout
+				if (timeoutRef.current) {
+					clearTimeout(timeoutRef.current);
+					timeoutRef.current = undefined;
+				}
+
+				if (isOpenRef.current) {
+					// Closing
+					isOpenRef.current = false;
+					setVisible(false);
+					timeoutRef.current = setTimeout(() => {
 						setInDom(false);
+						timeoutRef.current = undefined;
 					}, 300);
 				} else {
+					// Opening
+					isOpenRef.current = true;
 					setInDom(true);
+					setVisible(true);
 				}
 
 				browser.storage.local
@@ -134,7 +153,7 @@ const Search: React.FC<SearchProps> = ({
 		} else {
 			setDarkMode("light");
 		}
-	}, [inDom]);
+	}, []);
 
 	// set dark mode
 	useEffect(() => {
@@ -195,7 +214,11 @@ const Search: React.FC<SearchProps> = ({
 		// biome-ignore lint/a11y/noStaticElementInteractions: overlay container that stops event propagation to underlying page
 		<div
 			className={`${inDom ? "visible" : "hidden"} root ${darkMode}`}
-			style={{ opacity: visible ? 1 : 0, zIndex: 2147483647 }}
+			style={{
+				opacity: visible ? 1 : 0,
+				pointerEvents: visible ? "auto" : "none",
+				zIndex: 2147483647,
+			}}
 			onClick={(e) => e.stopPropagation()}
 			onKeyDown={(e) => e.stopPropagation()}
 		>
@@ -222,7 +245,7 @@ const Search: React.FC<SearchProps> = ({
 						ref={inputRef}
 						name="text"
 						className={`searchInput ${searchText ? "focus" : ""}`}
-						placeholder={`${getModifierKeyText()} + Enter`}
+						placeholder="Search"
 						rows={1}
 						autoComplete="off"
 						spellCheck="false"
@@ -231,9 +254,8 @@ const Search: React.FC<SearchProps> = ({
 						onInput={(e) => {
 							const elem = e.target as HTMLTextAreaElement;
 							elem.style.height = "auto";
-							elem.style.height = `${elem.scrollHeight - 4}px`;
-							if (elem.value.length === 0) {
-								elem.style.height = "auto";
+							if (elem.value.length > 0) {
+								elem.style.height = `${elem.scrollHeight - 4}px`;
 							}
 						}}
 						// NOTE: not using enter, since search on type feels better
@@ -250,8 +272,35 @@ const Search: React.FC<SearchProps> = ({
 					<span className="errorMsg">{inputError}</span>
 				</div>
 
-				<div className="right">
-					{/*
+			<div className="right">
+				{/*
+					MARK:- Search button
+				*/}
+				<div className="tooltip-container">
+					<button
+						type="button"
+						className="iconButton"
+						onClick={() => {
+							if (searchText) {
+								try {
+									onSearch(searchText, config);
+									setInputError("");
+								} catch (e) {
+									console.error(e);
+									if (e instanceof Error) {
+										onClear();
+										setInputError(e.message);
+									}
+								}
+							}
+						}}
+					>
+						<SearchIcon size={17} />
+					</button>
+					<div className="tooltip">{`${getModifierKeyText()} + Enter`}</div>
+				</div>
+
+				{/*
             MARK:- Case sensitive
           */}
 					<div className="tooltip-container">
@@ -307,8 +356,6 @@ const Search: React.FC<SearchProps> = ({
             </button>
             <div className="tooltip">Match Regex</div>
           </div> */}
-
-					<div className="border"></div>
 
 					{/*
             MARK:- Nav Btns
@@ -397,8 +444,8 @@ const Search: React.FC<SearchProps> = ({
 					animate={menuOpen ? "visible" : "hidden"}
 					exit="hidden"
 					variants={{
-						hidden: { opacity: 0 },
-						visible: { opacity: 1 },
+						hidden: { opacity: 0, pointerEvents: "none" as const },
+						visible: { opacity: 1, pointerEvents: "auto" as const },
 					}}
 					transition={{
 						delay: 0.05,
