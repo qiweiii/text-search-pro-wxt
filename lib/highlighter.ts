@@ -170,18 +170,24 @@ function collectMatches(
 	while (m !== null) {
 		if (m[0].length === 0) {
 			regex.lastIndex++;
+			m = regex.exec(text);
 			continue;
 		}
 		const start = m.index;
 		const end = start + m[0].length;
 
+		let isWholeWord = true;
 		if (wholeWord) {
 			const before = start > 0 ? text[start - 1] : undefined;
 			const after = end < text.length ? text[end] : undefined;
-			if (!isBoundaryChar(before) || !isBoundaryChar(after)) continue;
+			if (!isBoundaryChar(before) || !isBoundaryChar(after)) {
+				isWholeWord = false;
+			}
 		}
 
-		matches.push({ start, end });
+		if (isWholeWord) {
+			matches.push({ start, end });
+		}
 		m = regex.exec(text);
 	}
 	return matches;

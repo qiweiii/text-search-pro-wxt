@@ -156,6 +156,15 @@ MARK:- First Row
 	transition: all 0.3s ease;
 }
 
+.root .iconButton:disabled {
+	opacity: 0.3;
+	cursor: not-allowed;
+}
+
+.root .iconButton:disabled:hover {
+	background-color: transparent;
+}
+
 .root .iconButton.nav {
 	margin: 0;
 }

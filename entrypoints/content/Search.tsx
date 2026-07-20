@@ -8,6 +8,7 @@ import {
 	ArrowUpToLine,
 	CaseSensitiveIcon,
 	EllipsisVertical,
+	Regex as RegexIcon,
 	Search as SearchIcon,
 	WholeWordIcon,
 	X,
@@ -54,6 +55,7 @@ const Search: React.FC<SearchProps> = ({
 	const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
 	const isOpenRef = useRef(false);
 	const menuRef = useRef<HTMLDivElement>(null);
+	const menuBtnRef = useRef<HTMLButtonElement>(null);
 
 	const triggerCloseSearch = useCallback(() => {
 		if (timeoutRef.current) {
@@ -70,14 +72,14 @@ const Search: React.FC<SearchProps> = ({
 	}, []);
 
 	const handleSearch = useCallback(
-		debounce(async (text: string) => {
+		debounce(async (text: string, cfg: SearchConfig) => {
 			if (!text) {
 				onClear();
 				return;
 			}
 
 			try {
-				onSearch(text, config);
+				onSearch(text, cfg);
 				setInputError("");
 			} catch (e) {
 				console.error(e);
@@ -103,8 +105,8 @@ const Search: React.FC<SearchProps> = ({
 	// MARK:- Effects
 
 	useEffect(() => {
-		handleSearch(searchText);
-	}, [searchText, handleSearch]);
+		handleSearch(searchText, config);
+	}, [searchText, config, handleSearch]);
 
 	// On mount
 	useEffect(() => {
@@ -213,14 +215,40 @@ const Search: React.FC<SearchProps> = ({
 	// Close menu on click away
 	useEffect(() => {
 		if (!menuOpen) return;
-		const handleClickOutside = (e: MouseEvent) => {
-			if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+
+		const handleShadowClick = (e: MouseEvent) => {
+			const target = e.target as Node;
+			if (
+				menuRef.current &&
+				!menuRef.current.contains(target) &&
+				menuBtnRef.current &&
+				!menuBtnRef.current.contains(target)
+			) {
 				setMenuOpen(false);
 			}
 		};
-		document.addEventListener("mousedown", handleClickOutside);
+
+		const handleDocumentClick = (e: MouseEvent) => {
+			const target = e.target as Node;
+			const shadowRoot = menuRef.current?.getRootNode();
+			const host = shadowRoot instanceof ShadowRoot ? shadowRoot.host : null;
+			// Ignore clicks from inside the shadow root (handled by shadow listener)
+			if (host?.contains(target)) return;
+			// Page click — close
+			setMenuOpen(false);
+		};
+
+		const shadowRoot = menuRef.current?.getRootNode();
+		if (shadowRoot instanceof ShadowRoot) {
+			shadowRoot.addEventListener("mousedown", handleShadowClick as EventListener);
+		}
+		document.addEventListener("mousedown", handleDocumentClick as EventListener);
+
 		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
+			if (shadowRoot instanceof ShadowRoot) {
+				shadowRoot.removeEventListener("mousedown", handleShadowClick as EventListener);
+			}
+			document.removeEventListener("mousedown", handleDocumentClick as EventListener);
 		};
 	}, [menuOpen]);
 
@@ -342,6 +370,7 @@ const Search: React.FC<SearchProps> = ({
 						<button
 							type="button"
 							className={`iconButton ${config.isWholeWord ? "active" : ""}`}
+							disabled={config.isRegex}
 							onClick={() => {
 								setConfig((config) => ({
 									...config,
@@ -357,20 +386,22 @@ const Search: React.FC<SearchProps> = ({
 					{/*
             MARK:- Regex
           */}
-					{/* <div className="tooltip-container">
-            <button
-              className={`iconButton ${config.isRegex ? "active" : ""}`}
-              onClick={() => {
-                setConfig((config) => ({
-                  ...config,
-                  isRegex: !config.isRegex,
-                }));
-              }}
-            >
-              <RegexIcon size={17} style={{ marginTop: "-1px" }} />
-            </button>
-            <div className="tooltip">Match Regex</div>
-          </div> */}
+					<div className="tooltip-container">
+						<button
+							type="button"
+							className={`iconButton ${config.isRegex ? "active" : ""}`}
+							onClick={() => {
+								setConfig((config) => ({
+									...config,
+									isRegex: !config.isRegex,
+									isWholeWord: false,
+								}));
+							}}
+						>
+							<RegexIcon size={17} style={{ marginTop: "-1px" }} />
+						</button>
+						<div className="tooltip">Match Regex</div>
+					</div>
 
 					{/*
             MARK:- Nav Btns
@@ -418,6 +449,7 @@ const Search: React.FC<SearchProps> = ({
 						<button
 							type="button"
 							className="iconButton nav"
+							ref={menuBtnRef}
 							onClick={toggleMenu}
 						>
 							<EllipsisVertical size={17} />
