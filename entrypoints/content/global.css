@@ -283,8 +283,9 @@ MARK:- Second Row
 }
 
 .root .RowTwo .result-counter span {
-	width: 65px;
+	min-width: 65px;
 	height: 25px;
+	padding: 0 8px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
