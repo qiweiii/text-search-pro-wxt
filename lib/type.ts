@@ -1,5 +1,5 @@
 export type SearchConfig = {
-	isWholeWord: boolean;
-	isCaseSensitive: boolean;
-	isRegex: boolean;
+  isWholeWord: boolean;
+  isCaseSensitive: boolean;
+  isRegex: boolean;
 };

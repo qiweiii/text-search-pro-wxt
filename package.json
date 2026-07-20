@@ -1,42 +1,42 @@
 {
-	"name": "text-search-pro",
-	"description": "Text search like a PRO! Be it Web Page, TXT or JSON files, we got it covered!",
-	"private": true,
-	"version": "0.1.0",
-	"type": "module",
-	"packageManager": "pnpm@11.5.1",
-	"scripts": {
-		"dev": "wxt",
-		"dev:firefox": "wxt -b firefox",
-		"build": "wxt build",
-		"build:edge": "wxt build -b edge",
-		"build:firefox": "wxt build -b firefox --mv3",
-		"zip": "wxt zip",
-		"zip:edge": "wxt zip -b edge",
-		"zip:firefox": "wxt zip -b firefox --mv3",
-		"zip:all": "pnpm run zip && pnpm run zip:edge && pnpm run zip:firefox",
-		"compile": "tsc --noEmit",
-		"lint": "biome lint .",
-		"format": "biome format --write .",
-		"check": "biome check --write .",
-		"postinstall": "wxt prepare"
-	},
-	"dependencies": {
-		"@icons-pack/react-simple-icons": "12.0.0",
-		"framer-motion": "11.18.2",
-		"lodash": "4.18.1",
-		"lucide-react": "0.427.0",
-		"react": "18.3.1",
-		"react-dom": "18.3.1"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "2.5.4",
-		"@types/lodash": "4.17.24",
-		"@types/react": "18.3.31",
-		"@types/react-dom": "18.3.7",
-		"@wxt-dev/module-react": "1.2.2",
-		"typescript": "5.9.3",
-		"vite": "8.0.16",
-		"wxt": "0.20.26"
-	}
+  "name": "text-search-pro",
+  "description": "Text search like a PRO! Be it Web Page, TXT or JSON files, we got it covered!",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "pnpm@11.5.1",
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "build": "wxt build",
+    "build:edge": "wxt build -b edge",
+    "build:firefox": "wxt build -b firefox --mv3",
+    "zip": "wxt zip",
+    "zip:edge": "wxt zip -b edge",
+    "zip:firefox": "wxt zip -b firefox --mv3",
+    "zip:all": "pnpm run zip && pnpm run zip:edge && pnpm run zip:firefox",
+    "compile": "tsc --noEmit",
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "check": "biome check --write .",
+    "postinstall": "wxt prepare"
+  },
+  "dependencies": {
+    "@icons-pack/react-simple-icons": "12.0.0",
+    "framer-motion": "11.18.2",
+    "lodash": "4.18.1",
+    "lucide-react": "0.427.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.4",
+    "@types/lodash": "4.17.24",
+    "@types/react": "18.3.31",
+    "@types/react-dom": "18.3.7",
+    "@wxt-dev/module-react": "1.2.2",
+    "typescript": "5.9.3",
+    "vite": "8.0.16",
+    "wxt": "0.20.26"
+  }
 }
