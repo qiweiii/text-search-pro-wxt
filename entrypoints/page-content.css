@@ -5,7 +5,6 @@ MARK:- Mark.js
 */
 .tsp-mark {
 	padding: 1px;
-	background: transparent;
 	background: linear-gradient(to right, #ffe75c 50%, transparent 50%);
 	background-position: right bottom;
 	background-size: 200% 100%;

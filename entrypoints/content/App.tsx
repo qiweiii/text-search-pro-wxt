@@ -70,7 +70,9 @@ const App: React.FC = () => {
 	useEffect(() => {
 		const element = results?.[currentIndex];
 		if (element) {
-			results?.forEach((e) => e.classList.remove("current"));
+			results?.forEach((e) => {
+				e.classList.remove("current");
+			});
 			element.classList.add("current");
 			scrollTo(element);
 		}

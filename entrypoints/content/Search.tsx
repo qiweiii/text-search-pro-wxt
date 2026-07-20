@@ -38,7 +38,6 @@ const Search: React.FC<SearchProps> = ({
 	onClear,
 	numResults,
 	currentIndex,
-	loading,
 }) => {
 	const [inDom, setInDom] = useState(false);
 	const [visible, setVisible] = useState(false);
@@ -52,13 +51,13 @@ const Search: React.FC<SearchProps> = ({
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [inputError, setInputError] = useState<string>();
 
-	const triggerCloseSearch = () => {
+	const triggerCloseSearch = useCallback(() => {
 		setVisible(false);
 		setTimeout(() => {
 			markInstance.unmark();
 			setInDom(false);
 		}, 200);
-	};
+	}, []);
 
 	const handleSearch = useCallback(
 		debounce(async (text: string) => {
@@ -100,7 +99,7 @@ const Search: React.FC<SearchProps> = ({
 	// On mount
 	useEffect(() => {
 		// Add listener for when click on extension icon
-		browser.runtime.onMessage.addListener((request: any) => {
+		browser.runtime.onMessage.addListener((request: { message?: string }) => {
 			if (request.message === "toggle_tsp_extension") {
 				// 2 step to allow animation finish then remove from dom
 				setVisible((visible) => !visible);
@@ -193,6 +192,7 @@ const Search: React.FC<SearchProps> = ({
 
 	// MARK:- <Render />
 	return (
+		// biome-ignore lint/a11y/noStaticElementInteractions: overlay container that stops event propagation to underlying page
 		<div
 			className={`${inDom ? "visible" : "hidden"} root ${darkMode}`}
 			style={{ opacity: visible ? 1 : 0, zIndex: 2147483647 }}
@@ -256,6 +256,7 @@ const Search: React.FC<SearchProps> = ({
           */}
 					<div className="tooltip-container">
 						<button
+							type="button"
 							className={`iconButton ${config.isCaseSensitive ? "active" : ""}`}
 							onClick={() => {
 								setConfig((config) => ({
@@ -275,6 +276,7 @@ const Search: React.FC<SearchProps> = ({
           */}
 					<div className="tooltip-container">
 						<button
+							type="button"
 							className={`iconButton ${config.isWholeWord ? "active" : ""}`}
 							onClick={() => {
 								setConfig((config) => ({
@@ -312,42 +314,50 @@ const Search: React.FC<SearchProps> = ({
             MARK:- Nav Btns
           */}
 					<div className="tooltip-container nav">
-						<button className="iconButton nav" onClick={onPrev}>
+						<button type="button" className="iconButton nav" onClick={onPrev}>
 							<ArrowUp size={18} />
 						</button>
 						<div className="tooltip">Previous ({getModifierKeyText()} + ↑)</div>
 					</div>
 
 					<div className="tooltip-container nav">
-						<button className="iconButton nav" onClick={onNext}>
+						<button type="button" className="iconButton nav" onClick={onNext}>
 							<ArrowDown size={18} />
 						</button>
 						<div className="tooltip">Next ({getModifierKeyText()} + ↓)</div>
 					</div>
 
 					<div className="tooltip-container nav">
-						<button className="iconButton nav" onClick={onFirst}>
+						<button type="button" className="iconButton nav" onClick={onFirst}>
 							<ArrowUpToLine size={18} />
 						</button>
 						<div className="tooltip">First</div>
 					</div>
 
 					<div className="tooltip-container nav">
-						<button className="iconButton nav" onClick={onLast}>
+						<button type="button" className="iconButton nav" onClick={onLast}>
 							<ArrowDownToLine size={18} />
 						</button>
 						<div className="tooltip">Last</div>
 					</div>
 
 					<div className="tooltip-container nav">
-						<button className="iconButton nav" onClick={triggerCloseSearch}>
+						<button
+							type="button"
+							className="iconButton nav"
+							onClick={triggerCloseSearch}
+						>
 							<X size={19} />
 						</button>
 						<div className="tooltip">Close (Alt + F)</div>
 					</div>
 
 					<div className="tooltip-container nav">
-						<button className="iconButton nav" onClick={toggleMenu}>
+						<button
+							type="button"
+							className="iconButton nav"
+							onClick={toggleMenu}
+						>
 							<EllipsisVertical size={17} />
 						</button>
 						<div className="tooltip">Menu</div>

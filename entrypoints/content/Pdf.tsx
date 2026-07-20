@@ -4,7 +4,7 @@ interface PdfProps {
 	url: string;
 }
 
-const Pdf: React.FC<PdfProps> = ({ url }) => {
+const Pdf: React.FC<PdfProps> = () => {
 	// TODO: Implement PDF search
 	return <div></div>;
 };

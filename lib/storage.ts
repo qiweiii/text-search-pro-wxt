@@ -7,7 +7,7 @@ export const getStorage = async (key: string) => {
 	return storage[key];
 };
 
-export const setStorage = async (key: string, value: any) => {
+export const setStorage = async (key: string, value: unknown) => {
 	const newStorage = { [key]: value };
 	await browser.storage.local.set(newStorage);
 };
