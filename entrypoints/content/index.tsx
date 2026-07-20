@@ -1,6 +1,7 @@
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import Pdf from "./Pdf";
+import { loadFonts } from "@/lib/fonts";
 
 const isPdfUrl = (url: string): boolean => {
 	return (
@@ -14,6 +15,7 @@ export default defineContentScript({
 	cssInjectionMode: "ui",
 
 	async main(ctx) {
+		loadFonts();
 		const ui = await createShadowRootUi(ctx, {
 			name: "text-search-pro-shadow-root-ui",
 			position: "overlay",
