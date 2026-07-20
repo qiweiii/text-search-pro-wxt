@@ -53,6 +53,7 @@ const Search: React.FC<SearchProps> = ({
 	const [inputError, setInputError] = useState<string>();
 	const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
 	const isOpenRef = useRef(false);
+	const menuRef = useRef<HTMLDivElement>(null);
 
 	const triggerCloseSearch = useCallback(() => {
 		if (timeoutRef.current) {
@@ -208,6 +209,20 @@ const Search: React.FC<SearchProps> = ({
 			document.removeEventListener("keydown", handleKeyDown, true);
 		};
 	}, [inDom, visible, onNext, onPrev, triggerCloseSearch]);
+
+	// Close menu on click away
+	useEffect(() => {
+		if (!menuOpen) return;
+		const handleClickOutside = (e: MouseEvent) => {
+			if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+				setMenuOpen(false);
+			}
+		};
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, [menuOpen]);
 
 	// MARK:- <Render />
 	return (
@@ -439,6 +454,7 @@ const Search: React.FC<SearchProps> = ({
           MARK:- Menu
         */}
 				<motion.div
+					ref={menuRef}
 					className="menu-container"
 					initial="hidden"
 					animate={menuOpen ? "visible" : "hidden"}

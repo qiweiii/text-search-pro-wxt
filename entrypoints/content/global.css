@@ -1,18 +1,12 @@
 :root {
-	/* --primary-shadow: box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.5); */
 	--primary-shadow:
-		rgba(0, 0, 0, 0.4) 0px 2px 2px,
-		rgba(0, 0, 0, 0.3) 0px 5px 13px -3px,
-		rgba(0, 0, 0, 0.2) 0px -0.4px 0px 0px inset;
-	--secondary-shadow: rgba(0, 0, 0, 0.4) 0px 3px 10px;
-}
-
-body {
-	font-family: Poppins, Arial, Helvetica, sans-serif;
-	margin: 0;
+		rgba(0, 0, 0, 0.12) 0px 2px 4px,
+		rgba(0, 0, 0, 0.08) 0px 5px 13px -3px;
+	--secondary-shadow: rgba(0, 0, 0, 0.12) 0px 3px 8px;
 }
 
 .root {
+	font-family: Poppins, Arial, Helvetica, sans-serif;
 	width: auto;
 
 	position: fixed;
@@ -117,13 +111,6 @@ MARK:- First Row
 
 .root .searchInput::placeholder {
 	color: rgb(171, 171, 171);
-	opacity: 0;
-	transition: opacity 0.3s ease;
-}
-
-.root .searchInput:focus::placeholder,
-.root .searchInput.focus::placeholder {
-	opacity: 1;
 }
 
 .root .searchInput.focus,
