@@ -548,7 +548,7 @@ const Search: React.FC<SearchProps> = ({
                     color={darkMode === "dark" ? "#fff" : "#000"}
                   />
                 </a>
-                <a href="https://x.com/qiweiy" target="_blank" rel="noopener">
+                <a href="https://x.com/qiweiiiy" target="_blank" rel="noopener">
                   <SiX
                     display="flex"
                     title="X"
